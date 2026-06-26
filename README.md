@@ -1,184 +1,153 @@
 # 🏢 UrbanHive – Housing Society Management System
 
-# 📌 Overview
+## 📌 Overview
 
-# 
+UrbanHive is a web-based Housing Society Management System developed to simplify the day-to-day management of residential communities. It provides separate dashboards for Residents, Managers, and Workers, allowing each user to perform tasks based on their role through a simple and user-friendly interface.
 
-# UrbanHive is a web-based Housing Society Management System developed to simplify the day-to-day management of residential communities. It provides separate dashboards for Residents, Managers, and Workers, allowing each user to perform tasks based on their role through a simple and user-friendly interface.
+The project follows a client-server architecture where the frontend is responsible for the user interface and the backend manages authentication, database operations, and API services.
 
-# 
+---
 
-# The project follows a client-server architecture where the frontend is responsible for the user interface and the backend manages authentication, database operations, and API services.
+## ✨ Features
 
-# 
+### 👤 Resident
 
-# ✨ Features
+* Secure login
+* View society notices
+* Register and track complaints
+* Manage visitor requests
+* View maintenance details
+* Update personal profile
 
-# 👤 Resident
+### 👨‍💼 Manager
 
-# Secure login
+* Manage residents and workers
+* Publish society notices
+* Handle complaints
+* Monitor visitors
+* View maintenance records
+* Access management dashboard
 
-# View society notices
+### 👷 Worker
 
-# Register and track complaints
+* Login with worker account
+* View assigned work
+* Update work status
+* Receive notifications
+* Manage profile information
 
-# Manage visitor requests
+---
 
-# View maintenance details
+## 🛠️ Technology Stack
 
-# Update personal profile
+### Frontend
 
-# 👨‍💼 Manager
+* HTML5
+* CSS3
+* JavaScript
 
-# Manage residents and workers
+### Backend
 
-# Publish society notices
+* Node.js
+* Express.js
 
-# Handle complaints
+### Database
 
-# Monitor visitors
+* MongoDB Atlas
 
-# View maintenance records
+### Authentication
 
-# Access management dashboard
+* JSON Web Token (JWT)
 
-# 👷 Worker
+---
 
-# Login with worker account
+## 📂 Project Structure
 
-# View assigned work
+```text
+UrbanHive/
+│
+├── client/              # Frontend source files
+├── server/              # Backend API and database connection
+├── documents/           # Project documentation
+├── README.md
+└── .gitignore
+```
 
-# Update work status
+---
 
-# Receive notifications
+## ⚙️ Installation
 
-# Manage profile information
+### 1. Clone the repository
 
-# 🛠️ Technology Stack
+```bash
+git clone https://github.com/YourUsername/UrbanHive.git
+```
 
-# Frontend
+### 2. Move into the project folder
 
-# HTML5
+```bash
+cd UrbanHive
+```
 
-# CSS3
+### 3. Install backend dependencies
 
-# JavaScript
+```bash
+cd server
+npm install
+```
 
-# Backend
+### 4. Configure environment variables
 
-# Node.js
+Create a `.env` file inside the `server` folder and add your required environment variables such as:
 
-# Express.js
+* MongoDB Connection URI
+* JWT Secret Key
 
-# Database
+### 5. Start the backend server
 
-# MongoDB Atlas
+```bash
+npm run dev
+```
 
-# Authentication
+### 6. Run the frontend
 
-# JSON Web Token (JWT)
+Open the `client` folder using any local server.
 
-# 📂 Project Structure
+Example:
 
-# UrbanHive/
+```bash
+python -m http.server 5500
+```
 
-# │
+Open your browser and visit:
 
-# ├── client/              # Frontend source files
+```
+http://localhost:5500
+```
 
-# ├── server/              # Backend API and database connection
+---
 
-# ├── documents/           # Project documentation
+## 📸 Screenshots
 
-# ├── README.md
+You can add screenshots of the following pages:
 
-# └── .gitignore
+* Login Page
+* Resident Dashboard
+* Manager Dashboard
+* Worker Dashboard
+* Complaint Management
+* Notice Board
 
-# ⚙️ Installation
+---
 
-# 1\. Clone the repository
+## 🚀 Future Improvements
 
-# git clone https://github.com/YourUsername/UrbanHive.git
+* Online maintenance payment
+* Email notifications
+* Mobile application
+* Event management
+* Emergency alert system
+* AI-powered complaint categorization
 
-# 2\. Move into the project folder
-
-# cd UrbanHive
-
-# 3\. Install backend dependencies
-
-# cd server
-
-# npm install
-
-# 4\. Configure environment variables
-
-# 
-
-# Create a .env file inside the server folder and add your required environment variables such as:
-
-# 
-
-# MongoDB Connection URI
-
-# JWT Secret Key
-
-# 5\. Start the backend server
-
-# npm run dev
-
-# 6\. Run the frontend
-
-# 
-
-# Open the client folder using any local server.
-
-# 
-
-# Example:
-
-# 
-
-# python -m http.server 5500
-
-# 
-
-# Open your browser and visit:
-
-# 
-
-# http://localhost:5500
-
-# 📸 Screenshots
-
-# 
-
-# You can add screenshots of the following pages:
-
-# 
-
-# Login Page
-
-# Resident Dashboard
-
-# Manager Dashboard
-
-# Worker Dashboard
-
-# Complaint Management
-
-# Notice Board
-
-# 🚀 Future Improvements
-
-# Online maintenance payment
-
-# Email notifications
-
-# Mobile application
-
-# Event management
-
-# Emergency alert system
-
-# AI-powered complaint categorization
+---
 
