@@ -1,0 +1,238 @@
+/* ===== Urban Hive Premium Design System ===== */
+/* Main CSS Import File */
+
+/* Base Styles */
+@import url('./base/variables.css');
+
+/* Effects */
+@import url('./effects/glassmorphism.css');
+@import url('./effects/3d-effects.css');
+@import url('./effects/animations.css');
+
+/* Components */
+@import url('./components/sidebar.css');
+@import url('./components/cards.css');
+@import url('./components/buttons.css');
+@import url('./components/modals.css');
+
+/* Layouts */
+@import url('./layouts/dashboard.css');
+
+/* ===== Additional Global Styles ===== */
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Selection */
+::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: white;
+}
+
+/* Focus Ring */
+:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* Link Styles */
+a {
+    color: var(--accent-primary);
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--accent-secondary);
+}
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 1.5rem 0;
+}
+
+/* Text Gradients */
+.text-gradient {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Status Indicators */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.online {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success-glow);
+}
+
+.status-dot.offline {
+    background: var(--text-muted);
+}
+
+.status-dot.busy {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning-glow);
+}
+
+/* Progress Bar */
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+    transition: width 0.5s ease-out;
+}
+
+/* Ring/Circular Progress */
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.progress-ring .bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.progress-ring .fill {
+    stroke: var(--accent-primary);
+    transition: stroke-dashoffset 0.5s ease-out;
+}
+
+/* Avatar */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    background: var(--accent-gradient);
+    color: white;
+    flex-shrink: 0;
+}
+
+.avatar.sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+.avatar.lg {
+    width: 56px;
+    height: 56px;
+    font-size: 1.25rem;
+}
+
+.avatar.xl {
+    width: 72px;
+    height: 72px;
+    font-size: 1.5rem;
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Emergency Card Styling */
+.emergency-card {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    animation: borderGlow 3s ease-in-out infinite;
+}
+
+.emergency-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--error), var(--warning), var(--error));
+    background-size: 200% 100%;
+    animation: gradientShift 2s linear infinite;
+}
+
+/* Chart Placeholder */
+.chart-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

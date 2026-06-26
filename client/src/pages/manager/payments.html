@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments & Billing - Urban Hive</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="icon" href="../../assets/images/UrbanHive-Logo.png">
+    <style>
+        .payment-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .payment-filters .form-group {
+            margin: 0;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .payment-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-md);
+            margin-top: 0.5rem;
+        }
+
+        .payment-summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .payment-summary-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .payment-summary-value {
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+        }
+
+        .payment-summary-value.green {
+            color: #10b981;
+        }
+
+        .payment-summary-value.orange {
+            color: #f59e0b;
+        }
+
+        .payment-summary-value.red {
+            color: #ef4444;
+        }
+
+        .payment-summary-value.blue {
+            color: #3b82f6;
+        }
+
+        .amount-cell {
+            font-weight: 600;
+            font-family: var(--font-display);
+        }
+
+        .receipt-number {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 640px) {
+            .payment-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script type="module" src="../../scripts/core/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="../../assets/images/UrbanHive-Logo.png" alt="Urban Hive" class="sidebar-logo-icon"
+                        style="width: 50px; height: 50px; object-fit: contain;">
+                    <span class="sidebar-logo-text">Urban Hive</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Main</p>
+                    <a href="dashboard.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="notices.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Notices</span>
+                    </a>
+                    <a href="complaints.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Complaints</span>
+                    </a>
+                    <a href="workers.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>Workers</span>
+                    </a>
+                    <a href="residents.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Residents</span>
+                    </a>
+                    <a href="payments.html" class="nav-link active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span>Payments</span>
+                    </a>
+                    <a href="visitors.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                        <span>Visitors</span>
+                    </a>
+                    <a href="reports.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">System</p>
+                    <a href="settings.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div class="user-info">
+                        <div class="user-name">Manager</div>
+                        <div class="user-role">Manager</div>
+                    </div>
+                    <button class="logout-btn" title="Logout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="topbar-actions">
+                    <button class="topbar-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 0.25rem;">Payments & Billing
+                        </h1>
+                        <p class="text-muted">Track maintenance fees, dues & collections</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline" onclick="showModal('recordPaymentModal')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            Record Payment
+                        </button>
+                        <button class="btn btn-primary" onclick="showModal('generateBillModal')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            Generate Bill
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Collection</span>
+                            <div class="stat-card-icon success">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalCollection">₹0</div>
+                        <div class="stat-card-subtitle">This month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Pending Dues</span>
+                            <div class="stat-card-icon warning">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="pendingDues">₹0</div>
+                        <div class="stat-card-subtitle" id="pendingCount">0 payments pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Overdue</span>
+                            <div class="stat-card-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                                    </path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="overdueAmount">₹0</div>
+                        <div class="stat-card-subtitle" id="overdueCount">0 overdue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Paid This Month</span>
+                            <div class="stat-card-icon primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="paidCount">0</div>
+                        <div class="stat-card-subtitle">Payments received</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-body" style="padding: 1rem;">
+                        <div class="payment-filters">
+                            <div class="form-group">
+                                <select id="buildingFilter" onchange="filterPayments()">
+                                    <option value="">All Buildings</option>
+                                    <option value="Genesis Tower">Genesis Tower</option>
+                                    <option value="Horizon Heights">Horizon Heights</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select id="statusFilter" onchange="filterPayments()">
+                                    <option value="">All Status</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Overdue">Overdue</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select id="typeFilter" onchange="filterPayments()">
+                                    <option value="">All Types</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Parking">Parking</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 2; min-width: 200px;">
+                                <input type="text" id="searchInput" placeholder="Search by name or flat..."
+                                    onkeyup="filterPayments()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments Table -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Resident</th>
+                                        <th>Flat</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Generate Bill Modal -->
+    <div id="generateBillModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Generate New Bill</h3>
+            </div>
+            <div class="modal-body">
+                <form id="billForm">
+                    <div class="form-group">
+                        <label>Resident</label>
+                        <select name="residentId" id="billResident" required>
+                            <option value="">Select resident</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select name="type" required>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Water">Water</option>
+                                <option value="Parking">Parking</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" name="amount" placeholder="5500" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" name="dueDate" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('generateBillModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="generateBill()">Generate Bill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Payment Modal -->
+    <div id="recordPaymentModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Record Payment</h3>
+            </div>
+            <div class="modal-body">
+                <form id="recordForm">
+                    <div class="form-group">
+                        <label>Select Pending Payment</label>
+                        <select name="paymentId" id="pendingPaymentSelect" required>
+                            <option value="">Select payment</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Payment Date</label>
+                            <input type="date" name="paidDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Receipt No.</label>
+                            <input type="text" name="receiptNo" placeholder="RCP-001">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('recordPaymentModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="recordPayment()">Mark as Paid</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../scripts/core/api.js"></script>
+    <script src="../../scripts/core/dashboard.js"></script>
+    <script>
+        const user = requireAuth();
+        if (!user || user.role !== 'manager') window.location.href = 'login.html';
+
+        let paymentsCache = [];
+        let residentsCache = [];
+
+        function toUiStatus(status) {
+            const map = { pending: 'Pending', approved: 'Paid', rejected: 'Rejected' };
+            return map[status] || status;
+        }
+
+        function mapApiPayment(p) {
+            return {
+                id: p._id,
+                residentName: p.residentId?.name || '',
+                flatNo: p.residentId?.flatNo || '',
+                type: p.type || 'Maintenance',
+                amount: p.amount || 0,
+                status: toUiStatus(p.status),
+                dueDate: p.dueDate || p.createdAt || '',
+                paidDate: p.paidDate || (p.verifiedAt ? p.verifiedAt : ''),
+                building: p.building || ''
+            };
+        }
+
+        async function loadPayments() {
+            try {
+                const res = await UrbanHiveApi.apiGet('/payments');
+                paymentsCache = (res.payments || []).map(mapApiPayment);
+            } catch (error) {
+                console.error('Failed to load payments:', error);
+                showToast('Failed to load payments from server.', 'error');
+            }
+        }
+
+        async function loadResidents() {
+            try {
+                const res = await UrbanHiveApi.apiGet('/users?role=resident');
+                residentsCache = res.users || [];
+            } catch (e) {
+                console.error('Failed to load residents:', e);
+            }
+        }
+
+        function renderPaymentsTable(list) {
+            renderPayments(list);
+        }
+
+        function updateStats() {
+            const paid = paymentsCache.filter(p => p.status === 'Paid');
+            const pending = paymentsCache.filter(p => p.status === 'Pending');
+            const overdue = paymentsCache.filter(p => p.status === 'Overdue');
+
+            const totalCollected = paid.reduce((sum, p) => sum + p.amount, 0);
+            const pendingTotal = pending.reduce((sum, p) => sum + p.amount, 0);
+            const overdueTotal = overdue.reduce((sum, p) => sum + p.amount, 0);
+
+            document.getElementById('totalCollection').textContent = formatCurrency(totalCollected);
+            document.getElementById('pendingDues').textContent = formatCurrency(pendingTotal);
+            document.getElementById('pendingCount').textContent = `${pending.length} payments pending`;
+            document.getElementById('overdueAmount').textContent = formatCurrency(overdueTotal);
+            document.getElementById('overdueCount').textContent = `${overdue.length} overdue`;
+            document.getElementById('paidCount').textContent = paid.length;
+        }
+
+        function renderPayments(payments) {
+            document.getElementById('paymentsTable').innerHTML = payments.map(p => `
+                <tr>
+                    <td><span style="font-family: monospace; font-size: 0.75rem;">${p.id}</span></td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <div style="width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">${(p.residentName || 'U').charAt(0)}</div>
+                            ${p.residentName || 'Unknown'}
+                        </div>
+                    </td>
+                    <td><strong>${p.flatNo || '—'}</strong></td>
+                    <td>${p.type}</td>
+                    <td class="amount-cell">${formatCurrency(p.amount)}</td>
+                    <td>${formatDate(p.dueDate)}</td>
+                    <td>${createBadge(p.status)}</td>
+                    <td>
+                        ${p.status !== 'Paid' ? `<button class="btn btn-primary" style="padding: 0.375rem 0.75rem; font-size: 0.75rem;" onclick="quickPay('${p.id}')">Mark Paid</button>` : `<span class="receipt-number">${p.paidDate ? formatDate(p.paidDate) : ''}</span>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterPayments() {
+            let filtered = paymentsCache;
+            const building = document.getElementById('buildingFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            if (building) filtered = filtered.filter(p => p.building === building);
+            if (status) filtered = filtered.filter(p => p.status === status);
+            if (type) filtered = filtered.filter(p => p.type === type);
+            if (search) filtered = filtered.filter(p =>
+                (p.residentName || '').toLowerCase().includes(search) ||
+                (p.flatNo || '').toLowerCase().includes(search)
+            );
+            renderPayments(filtered);
+        }
+
+        function populateResidentDropdown() {
+            const select = document.getElementById('billResident');
+            residentsCache.forEach(r => {
+                select.innerHTML += `<option value="${r._id}">${r.name} — ${r.flatNo || '-'} (${r.buildingId || '-'})</option>`;
+            });
+        }
+
+        function populatePendingPayments() {
+            const select = document.getElementById('pendingPaymentSelect');
+            select.innerHTML = '<option value="">Select payment</option>';
+            paymentsCache.filter(p => p.status === 'Pending' || p.status === 'Overdue').forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.id} — ${p.residentName || 'Resident'} — ${p.flatNo || ''} — ${formatCurrency(p.amount)} (${p.status})</option>`;
+            });
+        }
+
+        async function generateBill() {
+            const form = document.getElementById('billForm');
+            const formData = new FormData(form);
+            const residentId = formData.get('residentId');
+            const resident = residentsCache.find(r => r._id === residentId);
+            if (!resident || !formData.get('amount') || !formData.get('dueDate')) {
+                showToast('Please fill all fields', 'error'); return;
+            }
+            try {
+                await UrbanHiveApi.apiPost('/payments', {
+                    residentId: resident._id,
+                    amount: parseInt(formData.get('amount')),
+                    type: formData.get('type'),
+                    status: 'pending',
+                    dueDate: formData.get('dueDate')
+                });
+                hideModal('generateBillModal'); form.reset();
+                await loadPayments();
+                updateStats();
+                showToast('Bill generated successfully!', 'success');
+            } catch (e) {
+                showToast('Failed to generate bill: ' + e.message, 'error');
+            }
+        }
+
+        async function recordPayment() {
+            const form = document.getElementById('recordForm');
+            const formData = new FormData(form);
+            const paymentId = formData.get('paymentId');
+            const payment = paymentsCache.find(p => p.id === paymentId);
+            if (!payment || !formData.get('paidDate')) {
+                showToast('Please fill all fields', 'error'); return;
+            }
+            try {
+                await UrbanHiveApi.apiPatch(`/payments/${paymentId}/verify`, { status: 'approved' });
+                payment.status = 'Paid';
+                payment.paidDate = formData.get('paidDate');
+            } catch (error) {
+                payment.status = 'Paid';
+                payment.paidDate = formData.get('paidDate');
+                showToast('API unavailable, updated locally.', 'info');
+            }
+            hideModal('recordPaymentModal'); form.reset(); filterPayments(); updateStats();
+            populatePendingPayments();
+            showToast('Payment recorded successfully!', 'success');
+        }
+
+        async function quickPay(id) {
+            const payment = paymentsCache.find(p => p.id === id);
+            if (payment) {
+                try {
+                    await UrbanHiveApi.apiPatch(`/payments/${id}/verify`, { status: 'approved' });
+                    payment.status = 'Paid';
+                    payment.paidDate = new Date().toISOString().split('T')[0];
+                } catch (error) {
+                    payment.status = 'Paid';
+                    payment.paidDate = new Date().toISOString().split('T')[0];
+                    showToast('API unavailable, updated locally.', 'info');
+                }
+                filterPayments(); updateStats(); populatePendingPayments();
+                showToast(`Payment ${id} marked as paid!`, 'success');
+            }
+        }
+
+        // Initialize
+        (async function initPage() {
+            await loadResidents();
+            await loadPayments();
+            updateStats();
+            renderPayments(paymentsCache);
+            populateResidentDropdown();
+            populatePendingPayments();
+        })();
+    </script>
+</body>
+
+</html>

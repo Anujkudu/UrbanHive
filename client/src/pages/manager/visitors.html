@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Logs - Urban Hive</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="icon" href="../../assets/images/UrbanHive-Logo.png">
+    <style>
+        .visitor-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .visitor-type-badge.guest {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+
+        .visitor-type-badge.delivery {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .visitor-type-badge.service {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .visitor-type-badge.cab {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .status-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-indicator .dot.in {
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-indicator .dot.out {
+            background: var(--text-muted);
+        }
+
+        .time-cell {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+        }
+    </style>
+<script type="module" src="../../scripts/core/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="../../assets/images/UrbanHive-Logo.png" alt="Urban Hive" class="sidebar-logo-icon"
+                        style="width: 50px; height: 50px; object-fit: contain;">
+                    <span class="sidebar-logo-text">Urban Hive</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Main</p>
+                    <a href="dashboard.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="notices.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Notices</span>
+                    </a>
+                    <a href="complaints.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Complaints</span>
+                    </a>
+                    <a href="workers.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>Workers</span>
+                    </a>
+                    <a href="residents.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Residents</span>
+                    </a>
+                    <a href="payments.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span>Payments</span>
+                    </a>
+                    <a href="visitors.html" class="nav-link active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                        <span>Visitors</span>
+                    </a>
+                    <a href="reports.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">System</p>
+                    <a href="settings.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div class="user-info">
+                        <div class="user-name">Manager</div>
+                        <div class="user-role">Manager</div>
+                    </div>
+                    <button class="logout-btn" title="Logout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="topbar-actions">
+                    <button class="topbar-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 0.25rem;">Visitor Logs</h1>
+                        <p class="text-muted">Track all visitor entries & exits across the society</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showModal('preApproveModal')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Pre-approve Visitor
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Visitors</span>
+                            <div class="stat-card-icon primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="totalVisitors">0</div>
+                        <div class="stat-card-subtitle">All time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Currently Inside</span>
+                            <div class="stat-card-icon success">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                    <polyline points="10 17 15 12 10 7"></polyline>
+                                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="insideCount">0</div>
+                        <div class="stat-card-subtitle">Active visitors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Deliveries</span>
+                            <div class="stat-card-icon info">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="deliveryCount">0</div>
+                        <div class="stat-card-subtitle">Total deliveries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Guests</span>
+                            <div class="stat-card-icon warning">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="guestCount">0</div>
+                        <div class="stat-card-subtitle">Total guests</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-body" style="padding: 1rem;">
+                        <div class="flex items-center gap-4" style="flex-wrap: wrap;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                <select id="buildingFilter" onchange="filterVisitors()">
+                                    <option value="">All Buildings</option>
+                                    <option value="Genesis Tower">Genesis Tower</option>
+                                    <option value="Horizon Heights">Horizon Heights</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                <select id="typeFilter" onchange="filterVisitors()">
+                                    <option value="">All Types</option>
+                                    <option value="Guest">Guest</option>
+                                    <option value="Delivery">Delivery</option>
+                                    <option value="Service">Service</option>
+                                    <option value="Cab">Cab</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                <select id="statusFilter" onchange="filterVisitors()">
+                                    <option value="">All Status</option>
+                                    <option value="In">Currently Inside</option>
+                                    <option value="Out">Left</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 2; min-width: 200px;">
+                                <input type="text" id="searchInput" placeholder="Search by visitor name or resident..."
+                                    onkeyup="filterVisitors()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visitor Log Table -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Visitor Name</th>
+                                        <th>Type</th>
+                                        <th>Purpose</th>
+                                        <th>Visiting</th>
+                                        <th>Entry</th>
+                                        <th>Exit</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visitorsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Pre-approve Modal -->
+    <div id="preApproveModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Pre-approve Visitor</h3>
+            </div>
+            <div class="modal-body">
+                <form id="preApproveForm">
+                    <div class="form-group">
+                        <label>Resident</label>
+                        <select name="residentId" id="visitorResident" required>
+                            <option value="">Select resident</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Visitor Name</label>
+                        <input type="text" name="visitorName" placeholder="e.g., John Smith" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Purpose</label>
+                            <input type="text" name="purpose" placeholder="e.g., Family Visit" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select name="type" required>
+                                <option value="Guest">Guest</option>
+                                <option value="Delivery">Delivery</option>
+                                <option value="Service">Service</option>
+                                <option value="Cab">Cab</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Date & Time</label>
+                        <input type="datetime-local" name="expectedTime" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('preApproveModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="preApproveVisitor()">Pre-approve</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../scripts/core/api.js"></script>
+    <script src="../../scripts/core/dashboard.js"></script>
+    <script>
+        const user = requireAuth();
+        if (!user || user.role !== 'manager') window.location.href = 'login.html';
+
+        let visitorsCache = [];
+        let residentsCache = [];
+
+        function toUiStatus(status) {
+            const map = { requested: 'Expected', approved: 'Expected', denied: 'Denied', entered: 'In' };
+            return map[status] || status;
+        }
+
+        function mapApiVisitor(v) {
+            return {
+                id: v._id,
+                residentName: v.residentId?.name || '',
+                flatNo: v.residentId?.flatNo || '',
+                building: v.building || '',
+                name: v.name || 'Visitor',
+                purpose: v.purpose || 'Guest',
+                type: v.purpose || 'Guest',
+                entryTime: (v.visitDate || '').replace('T', ' '),
+                exitTime: '',
+                status: toUiStatus(v.status)
+            };
+        }
+
+        async function loadVisitors() {
+            try {
+                const res = await UrbanHiveApi.apiGet('/visitors');
+                visitorsCache = (res.visitors || []).map(mapApiVisitor);
+            } catch (error) {
+                console.error('Failed to load visitors:', error);
+                showToast('Failed to load visitors from server.', 'error');
+            }
+        }
+
+        async function loadResidents() {
+            try {
+                const res = await UrbanHiveApi.apiGet('/users?role=resident');
+                residentsCache = res.users || [];
+            } catch (e) {
+                console.error('Failed to load residents:', e);
+            }
+        }
+
+        function getTypeBadge(type) {
+            const cls = (type || 'guest').toLowerCase();
+            return `<span class="visitor-type-badge ${cls}">${type || 'Guest'}</span>`;
+        }
+
+        function formatTime(dateTimeStr) {
+            if (!dateTimeStr) return '—';
+            const parts = dateTimeStr.split(' ');
+            return parts.length > 1 ? parts[1] : dateTimeStr;
+        }
+
+        function updateStats() {
+            document.getElementById('totalVisitors').textContent = visitorsCache.length;
+            document.getElementById('insideCount').textContent = visitorsCache.filter(v => v.status === 'In').length;
+            document.getElementById('deliveryCount').textContent = visitorsCache.filter(v => v.type === 'Delivery').length;
+            document.getElementById('guestCount').textContent = visitorsCache.filter(v => v.type === 'Guest').length;
+        }
+
+        function renderVisitors(visitors) {
+            document.getElementById('visitorsTable').innerHTML = visitors.map(v => `
+                <tr>
+                    <td><span style="font-family: monospace; font-size: 0.75rem;">${v.id}</span></td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <div style="width: 2rem; height: 2rem; border-radius: 50%; background: rgba(139, 92, 246, 0.2); color: #a78bfa; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">${v.name.charAt(0)}</div>
+                            ${v.name}
+                        </div>
+                    </td>
+                    <td>${getTypeBadge(v.type)}</td>
+                    <td style="font-size: 0.875rem; color: var(--text-secondary);">${v.purpose}</td>
+                    <td>
+                        <div style="font-size: 0.875rem;">${v.residentName || '—'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${v.flatNo || ''} • ${v.building || ''}</div>
+                    </td>
+                    <td class="time-cell">${formatTime(v.entryTime)}</td>
+                    <td class="time-cell">${v.exitTime ? formatTime(v.exitTime) : '—'}</td>
+                    <td>
+                        <span class="status-indicator">
+                            <span class="dot ${v.status === 'In' ? 'in' : 'out'}"></span>
+                            ${v.status === 'In' ? 'Inside' : 'Left'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterVisitors() {
+            let filtered = visitorsCache;
+            const building = document.getElementById('buildingFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            if (building) filtered = filtered.filter(v => v.building === building);
+            if (type) filtered = filtered.filter(v => v.type === type);
+            if (status) filtered = filtered.filter(v => v.status === status);
+            if (search) filtered = filtered.filter(v =>
+                v.name.toLowerCase().includes(search) ||
+                (v.residentName || '').toLowerCase().includes(search)
+            );
+            renderVisitors(filtered);
+        }
+
+        function populateResidents() {
+            const select = document.getElementById('visitorResident');
+            residentsCache.forEach(r => {
+                select.innerHTML += `<option value="${r._id}">${r.name} — ${r.flatNo || '-'} (${r.buildingId || '-'})</option>`;
+            });
+        }
+
+        async function preApproveVisitor() {
+            const form = document.getElementById('preApproveForm');
+            const formData = new FormData(form);
+            const resident = residentsCache.find(r => r._id === formData.get('residentId'));
+            if (!resident || !formData.get('visitorName') || !formData.get('purpose')) {
+                showToast('Please fill all fields', 'error'); return;
+            }
+            try {
+                await UrbanHiveApi.apiPost('/visitors', {
+                    residentId: resident._id,
+                    name: formData.get('visitorName'),
+                    purpose: formData.get('purpose'),
+                    visitDate: formData.get('expectedTime') || new Date().toISOString().slice(0, 10),
+                    status: 'approved'
+                });
+                hideModal('preApproveModal'); form.reset();
+                await loadVisitors();
+                updateStats();
+                showToast('Visitor pre-approved successfully!', 'success');
+            } catch (e) {
+                showToast('Failed to add visitor: ' + e.message, 'error');
+            }
+        }
+
+        // Initialize
+        (async function initPage() {
+            await loadResidents();
+            await loadVisitors();
+            updateStats();
+            renderVisitors(visitorsCache);
+            populateResidents();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard - Urban Hive</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="icon" href="../../assets/images/UrbanHive-Logo.png">
+    <style>
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.125rem;
+            border-radius: 12px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: inherit;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 0.5rem;
+        }
+
+        .notif-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+<script type="module" src="../../scripts/core/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="../../assets/images/UrbanHive-Logo.png" alt="Urban Hive" class="sidebar-logo-icon"
+                        style="width: 50px; height: 50px; object-fit: contain;">
+                    <span class="sidebar-logo-text">Urban Hive</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Work</p>
+                    <a href="dashboard.html" class="nav-link active"><svg width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                        </svg><span>Dashboard</span></a>
+                    <a href="tasks.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg><span>Tasks</span></a>
+                    <a href="attendance.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg><span>Attendance</span></a>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">Info</p>
+                    <a href="notifications.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg><span>Notifications</span></a>
+                    <a href="salary.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg><span>Salary</span></a>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">Account</p>
+                    <a href="profile.html" class="nav-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg><span>My Profile</span></a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">W</div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebarUserName">Worker</div>
+                        <div class="user-role">Worker</div>
+                    </div>
+                    <button class="logout-btn" title="Logout" onclick="logout()"><svg width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg></button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()"><svg width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg></button>
+                <div class="topbar-actions"><button class="topbar-btn"><svg width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg><span class="notification-badge"></span></button></div>
+            </div>
+
+            <div class="content-area">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 0.25rem;">Worker Dashboard</h1>
+                        <p class="text-muted" id="workerInfo">Maintenance • Morning Shift</p>
+                    </div>
+                    <button class="btn btn-primary" id="attendanceBtn" onclick="markAttendance()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span id="attendanceBtnText">Mark Attendance</span>
+                    </button>
+                </div>
+
+                <!-- Attendance Banner -->
+                <div id="attendanceBanner" class="card"
+                    style="background: linear-gradient(to right, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); border-color: rgba(245, 158, 11, 0.3); margin-bottom: 1.5rem; animation: pulse-glow 2s ease-in-out infinite;">
+                    <div class="card-body" style="padding: 1rem;">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: rgba(245, 158, 11, 0.2); display: flex; align-items: center; justify-content: center;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" style="color: var(--warning);">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-sm">Attendance Not Marked</p>
+                                    <p class="text-xs text-muted">Please mark your attendance for today</p>
+                                </div>
+                            </div>
+                            <button class="btn"
+                                style="background: var(--warning); color: white; padding: 0.5rem 1rem; font-size: 0.875rem;"
+                                onclick="markAttendance()">Mark Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a href="tasks.html" class="quick-action-btn"><span>??</span> View Tasks</a>
+                    <a href="attendance.html" class="quick-action-btn"><span>??</span> Attendance</a>
+                    <a href="salary.html" class="quick-action-btn"><span>??</span> View Salary</a>
+                    <a href="notifications.html" class="quick-action-btn"><span>??</span> Notifications</a>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Today's Tasks</span>
+                            <div class="stat-card-icon primary"><svg width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg></div>
+                        </div>
+                        <div class="stat-card-value" id="statTasksToday">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Completed</span>
+                            <div class="stat-card-icon success"><svg width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg></div>
+                        </div>
+                        <div class="stat-card-value" id="statCompleted">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">Pending</span>
+                            <div class="stat-card-icon warning"><svg width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg></div>
+                        </div>
+                        <div class="stat-card-value" id="statPending">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header"><span class="stat-card-title">This Month</span>
+                            <div class="stat-card-icon info"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg></div>
+                        </div>
+                        <div class="stat-card-value" id="statAttendance">0</div>
+                        <div class="stat-card-subtitle">days</div>
+                    </div>
+                </div>
+
+                <!-- Widgets: Schedule + Notifications -->
+                <div class="widget-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg> Today's Schedule</h3>
+                        </div>
+                        <div class="card-body" id="scheduleWidget"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg> Recent Notifications</h3><a href="notifications.html" class="btn btn-outline"
+                                style="padding: 0.375rem 0.75rem; font-size: 0.75rem;">View All</a>
+                        </div>
+                        <div class="card-body" id="notifWidget"></div>
+                    </div>
+                </div>
+
+                <!-- Tasks List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg> My Tasks</h3><a href="tasks.html" class="btn btn-outline"
+                            style="padding: 0.5rem 1rem; font-size: 0.875rem;">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-list" id="tasksList"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../scripts/core/data.js"></script>
+    <script src="../../scripts/core/dashboard.js"></script>
+    <script>
+        const user = requireAuth();
+        if (!user || user.role !== 'worker') window.location.href = '../login.html';
+        let attendanceMarked = false;
+        if (user) document.getElementById('sidebarUserName').textContent = user.name;
+
+        function toggleSidebar() { document.getElementById('sidebar')?.classList.toggle('open'); }
+
+        const worker = data.workers.find(w => w.id === user.id) || data.workers[0];
+        document.getElementById('workerInfo').textContent = `${worker.type} • ${worker.shift} Shift`;
+
+        // Stats
+        document.getElementById('statTasksToday').textContent = data.workerStats.tasksToday;
+        document.getElementById('statCompleted').textContent = data.workerStats.completedTasks;
+        document.getElementById('statPending').textContent = data.workerStats.pendingTasks;
+        document.getElementById('statAttendance').textContent = data.workerStats.attendanceThisMonth;
+
+        // Tasks
+        const myTasks = data.tasks.filter(t => t.assignedTo === user.id || t.assignedTo === worker.id);
+        document.getElementById('tasksList').innerHTML = myTasks.length > 0 ? myTasks.map(t => `
+            <div class="card-list-item">
+                <div class="flex items-center gap-3">
+                    <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: rgba(59, 130, 246, 0.1); display: flex; align-items: center; justify-content: center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-primary);"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    </div>
+                    <div><p class="font-semibold text-sm">${t.title}</p><p class="text-xs text-muted">Due: ${formatDate(t.dueDate)}</p></div>
+                </div>
+                ${createBadge(t.status)}
+            </div>
+        `).join('') : '<p class="text-muted text-center" style="padding: 2rem;">No tasks assigned</p>';
+
+        // Schedule Widget
+        const shifts = { 'Morning': '6:00 AM - 2:00 PM', 'Evening': '2:00 PM - 10:00 PM', 'Night': '10:00 PM - 6:00 AM' };
+        const shiftIcons = { 'Morning': '??', 'Evening': '??', 'Night': '??' };
+        const pendingTasks = myTasks.filter(t => t.status !== 'Completed');
+        document.getElementById('scheduleWidget').innerHTML = `
+            <div class="schedule-item">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.125rem;">${shiftIcons[worker.shift] || '??'}</div>
+                <div><p style="font-weight: 600; font-size: 0.875rem;">${worker.shift} Shift</p><p class="text-muted text-sm">${shifts[worker.shift] || 'Regular hours'}</p></div>
+            </div>
+            ${pendingTasks.slice(0, 2).map(t => `
+                <div class="schedule-item">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1rem;">??</div>
+                    <div style="flex: 1;"><p style="font-weight: 500; font-size: 0.8125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.title}</p><p class="text-muted" style="font-size: 0.6875rem;">Due: ${formatDate(t.dueDate)}</p></div>
+                    ${createBadge(t.priority)}
+                </div>
+            `).join('')}
+            ${pendingTasks.length === 0 ? '<p class="text-muted text-sm" style="text-align: center; padding: 0.5rem;">No pending tasks ??</p>' : ''}
+        `;
+
+        // Notifications Widget
+        const recentNotifs = (data.workerNotifications || []).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+        const typeIcons = { 'Task': '??', 'Schedule': '??', 'Payment': '??', 'Alert': '??' };
+        document.getElementById('notifWidget').innerHTML = recentNotifs.length > 0 ? recentNotifs.map(n => `
+            <div class="notif-mini">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.12); display: flex; align-items: center; justify-content: center; font-size: 0.875rem; flex-shrink: 0;">${typeIcons[n.type] || '??'}</div>
+                <div style="flex: 1; min-width: 0;">
+                    <p style="font-size: 0.8125rem; font-weight: ${n.read ? '400' : '600'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${n.title}</p>
+                    <p class="text-muted" style="font-size: 0.6875rem;">${formatDate(n.date)} • ${n.time}</p>
+                </div>
+                ${n.read ? '' : '<div style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent-primary); flex-shrink: 0;"></div>'}
+            </div>
+        `).join('') : '<p class="text-muted text-sm" style="text-align: center; padding: 1rem;">No notifications</p>';
+
+        function markAttendance() {
+            if (attendanceMarked) return;
+            attendanceMarked = true;
+            document.getElementById('attendanceBanner').style.display = 'none';
+            document.getElementById('attendanceBtn').disabled = true;
+            document.getElementById('attendanceBtnText').textContent = 'Marked ?';
+            showToast('Attendance marked successfully!', 'success');
+        }
+    </script>
+</body>
+
+</html>

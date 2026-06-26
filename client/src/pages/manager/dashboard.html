@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - Urban Hive</title>
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="icon" href="../../assets/images/UrbanHive-Logo.png">
+    <style>
+        /* Quick Actions Bar */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: white;
+            transition: all var(--transition-normal);
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-action-btn.notice {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .quick-action-btn.sms {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .quick-action-btn.email {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .quick-action-btn.notification {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        /* Finance Section */
+        .finance-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 280px;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .finance-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .finance-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .finance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .finance-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .finance-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .finance-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .finance-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .finance-dot.assets {
+            background: #3b82f6;
+        }
+
+        .finance-dot.investments {
+            background: #8b5cf6;
+        }
+
+        .finance-dot.current {
+            background: #06b6d4;
+        }
+
+        .finance-dot.reserve {
+            background: #10b981;
+        }
+
+        .finance-dot.deficit {
+            background: #ef4444;
+        }
+
+        .finance-dot.liabilities {
+            background: #f59e0b;
+        }
+
+        .finance-item-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .finance-item-value {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        /* Pie Chart Container */
+        .chart-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .donut-chart {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .donut-chart svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .donut-chart circle {
+            fill: none;
+            stroke-width: 32;
+            stroke-linecap: round;
+        }
+
+        .donut-segment-1 {
+            stroke: #3b82f6;
+        }
+
+        .donut-segment-2 {
+            stroke: #8b5cf6;
+        }
+
+        .donut-segment-3 {
+            stroke: #06b6d4;
+        }
+
+        .donut-segment-4 {
+            stroke: #10b981;
+        }
+
+        .donut-segment-5 {
+            stroke: #ef4444;
+        }
+
+        .donut-segment-6 {
+            stroke: #f59e0b;
+        }
+
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .donut-center-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .donut-center-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Finance Actions */
+        .finance-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .finance-action-btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .finance-action-btn.primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .finance-action-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .finance-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Residents Manager Card */
+        .residents-manager {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .residents-manager {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .resident-stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .resident-stat:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .resident-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            margin-bottom: 0.25rem;
+        }
+
+        .resident-stat-value.blue {
+            color: #3b82f6;
+        }
+
+        .resident-stat-value.purple {
+            color: #8b5cf6;
+        }
+
+        .resident-stat-value.cyan {
+            color: #06b6d4;
+        }
+
+        .resident-stat-value.orange {
+            color: #f59e0b;
+        }
+
+        .resident-stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        /* Two Column Section */
+        .two-col-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .two-col-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Complaint Status Donut */
+        .complaint-status-chart {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .mini-donut {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .mini-donut svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .mini-donut circle {
+            fill: none;
+            stroke-width: 12;
+        }
+
+        .mini-donut .bg {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .mini-donut .open {
+            stroke: #f59e0b;
+        }
+
+        .mini-donut .progress {
+            stroke: #3b82f6;
+        }
+
+        .mini-donut .resolved {
+            stroke: #10b981;
+        }
+
+        .mini-donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .complaint-legends {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .complaint-legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .complaint-legend-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .complaint-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .complaint-legend-dot.open {
+            background: #f59e0b;
+        }
+
+        .complaint-legend-dot.progress {
+            background: #3b82f6;
+        }
+
+        .complaint-legend-dot.resolved {
+            background: #10b981;
+        }
+
+        .complaint-legend-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .complaint-legend-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .card-header-link {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .card-header-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.payment {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .activity-icon.complaint {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .activity-icon.visitor {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .activity-icon.notice {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        .activity-icon.resident {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-text {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .activity-text strong {
+            color: var(--accent-primary);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Events Widget */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s;
+        }
+
+        .event-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .event-date-badge {
+            width: 48px;
+            height: 52px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-primary), #6366f1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .event-date-badge .day {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .event-date-badge .month {
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .event-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.125rem;
+        }
+
+        .event-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .event-type-badge {
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .event-type-badge.meeting {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .event-type-badge.festival {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .event-type-badge.maintenance {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .event-type-badge.social {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        /* Occupancy Donut */
+        .occupancy-chart-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .occupancy-donut {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+
+        .occupancy-donut svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .occupancy-donut circle {
+            fill: none;
+            stroke-width: 10;
+        }
+
+        .occupancy-donut .bg {
+            stroke: rgba(255, 255, 255, 0.06);
+        }
+
+        .occupancy-donut .occupied {
+            stroke: #10b981;
+        }
+
+        .occupancy-donut .owners {
+            stroke: #3b82f6;
+        }
+
+        .occupancy-donut .tenants {
+            stroke: #8b5cf6;
+        }
+
+        .occupancy-donut .vacant {
+            stroke: #f59e0b;
+        }
+
+        .occupancy-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .occupancy-center .percent {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .occupancy-center .label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+        }
+
+        .occupancy-legends {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .occupancy-legend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .occupancy-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .occupancy-legend-dot.owners {
+            background: #3b82f6;
+        }
+
+        .occupancy-legend-dot.tenants {
+            background: #8b5cf6;
+        }
+
+        .occupancy-legend-dot.vacant {
+            background: #f59e0b;
+        }
+
+        .occupancy-legend span:last-child {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .three-col-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .three-col-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script type="module" src="../../scripts/core/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="../../assets/images/UrbanHive-Logo.png" alt="Urban Hive" class="sidebar-logo-icon"
+                        style="width: 50px; height: 50px; object-fit: contain;">
+                    <span class="sidebar-logo-text">Urban Hive</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Main</p>
+                    <a href="dashboard.html" class="nav-link active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="notices.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Notices</span>
+                    </a>
+                    <a href="complaints.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <span>Complaints</span>
+                    </a>
+                    <a href="workers.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>Workers</span>
+                    </a>
+                    <a href="residents.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Residents</span>
+                    </a>
+                    <a href="payments.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span>Payments</span>
+                    </a>
+                    <a href="visitors.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                        <span>Visitors</span>
+                    </a>
+                    <a href="reports.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">System</p>
+                    <a href="settings.html" class="nav-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div class="user-info">
+                        <div class="user-name">Manager</div>
+                        <div class="user-role">Manager</div>
+                    </div>
+                    <button class="logout-btn" title="Logout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="topbar-actions">
+                    <button class="topbar-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 style="font-size: 1.875rem; font-weight: 700; margin-bottom: 0.25rem;">Manager Dashboard
+                        </h1>
+                        <p class="text-muted">Society administration & monitoring</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showModal('newNoticeModal')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Create Notice
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn notice" onclick="showModal('newNoticeModal')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Send Notice
+                    </button>
+                    <button class="quick-action-btn sms" onclick="showToast('SMS feature coming soon!', 'info')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        </svg>
+                        Send SMS
+                    </button>
+                    <button class="quick-action-btn email" onclick="showToast('Email feature coming soon!', 'info')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                            </path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        Send Email
+                    </button>
+                    <button class="quick-action-btn notification" onclick="showToast('Notification sent!', 'success')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Send Notification
+                    </button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Maintenance Due</span>
+                            <div class="stat-card-icon warning">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statMaintenance">₹88K</div>
+                        <div class="stat-card-subtitle"><span class="badge badge-warning" style="font-size: 0.7rem;">12
+                                pending</span></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Cash in Hand</span>
+                            <div class="stat-card-icon success">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statCash">₹28.5K</div>
+                        <div class="stat-card-subtitle">Available funds</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Bank Balance</span>
+                            <div class="stat-card-icon primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M3 21h18"></path>
+                                    <path d="M3 10h18"></path>
+                                    <path d="M5 6l7-3 7 3"></path>
+                                    <path d="M4 10v11"></path>
+                                    <path d="M20 10v11"></path>
+                                    <path d="M8 14v3"></path>
+                                    <path d="M12 14v3"></path>
+                                    <path d="M16 14v3"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statBank">₹4.78L</div>
+                        <div class="stat-card-subtitle">Total deposits</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Residents</span>
+                            <div class="stat-card-icon info">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-card-value" id="statResidents">156</div>
+                        <div class="stat-card-subtitle">Active members</div>
+                    </div>
+                </div>
+
+                <!-- Two Column Section: Finances & Complaints -->
+                <div class="two-col-section">
+                    <!-- Society Finances Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                                Society Finances
+                            </h3>
+                            <a href="reports.html" class="card-header-link">Download Reports</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="finance-section" style="grid-template-columns: 1fr 160px;">
+                                <div class="finance-list">
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot assets"></span>
+                                            <span class="finance-item-label">Fixed Assets</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot investments"></span>
+                                            <span class="finance-item-label">Investments</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot current"></span>
+                                            <span class="finance-item-label">Current Assets</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot reserve"></span>
+                                            <span class="finance-item-label">Reserve Funds</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot deficit"></span>
+                                            <span class="finance-item-label">Deficit / Surplus</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                    <div class="finance-item">
+                                        <div class="finance-item-left">
+                                            <span class="finance-dot liabilities"></span>
+                                            <span class="finance-item-label">Current Liabilities</span>
+                                        </div>
+                                        <span class="finance-item-value">₹28,000</span>
+                                    </div>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <div class="donut-chart">
+                                        <svg viewBox="0 0 100 100">
+                                            <circle class="donut-segment-1" cx="50" cy="50" r="35"
+                                                stroke-dasharray="36.65 183.26" stroke-dashoffset="0"></circle>
+                                            <circle class="donut-segment-2" cx="50" cy="50" r="35"
+                                                stroke-dasharray="36.65 183.26" stroke-dashoffset="-36.65"></circle>
+                                            <circle class="donut-segment-3" cx="50" cy="50" r="35"
+                                                stroke-dasharray="36.65 183.26" stroke-dashoffset="-73.3"></circle>
+                                            <circle class="donut-segment-4" cx="50" cy="50" r="35"
+                                                stroke-dasharray="36.65 183.26" stroke-dashoffset="-109.95"></circle>
+                                            <circle class="donut-segment-5" cx="50" cy="50" r="35"
+                                                stroke-dasharray="18.33 183.26" stroke-dashoffset="-146.6"></circle>
+                                            <circle class="donut-segment-6" cx="50" cy="50" r="35"
+                                                stroke-dasharray="18.33 183.26" stroke-dashoffset="-164.93"></circle>
+                                        </svg>
+                                        <div class="donut-center">
+                                            <div class="donut-center-title">Balance</div>
+                                            <div class="donut-center-value">Sheet</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Residents Manager Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                Residents Manager
+                            </h3>
+                            <a href="residents.html" class="card-header-link">View All</a>
+                        </div>
+                        <div class="residents-manager">
+                            <div class="resident-stat">
+                                <div class="resident-stat-value blue" id="totalUnits">84</div>
+                                <div class="resident-stat-label">Total Units</div>
+                            </div>
+                            <div class="resident-stat">
+                                <div class="resident-stat-value purple" id="totalOwners">10</div>
+                                <div class="resident-stat-label">Owners</div>
+                            </div>
+                            <div class="resident-stat">
+                                <div class="resident-stat-value cyan" id="totalTenants">04</div>
+                                <div class="resident-stat-label">Tenants</div>
+                            </div>
+                            <div class="resident-stat">
+                                <div class="resident-stat-value orange" id="vacantUnits">10</div>
+                                <div class="resident-stat-label">Vacant Units</div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.5rem 1.5rem;">
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="17 1 21 5 17 9"></polyline>
+                                    <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                    <polyline points="7 23 3 19 7 15"></polyline>
+                                    <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                                </svg>
+                                Transfer Unit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaint Status & Workers Section -->
+                <div class="two-col-section">
+                    <!-- Complaint Status Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                Complaint Status
+                            </h3>
+                            <a href="complaints.html" class="card-header-link">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="complaint-status-chart">
+                                <div class="mini-donut">
+                                    <svg viewBox="0 0 36 36">
+                                        <circle class="bg" cx="18" cy="18" r="15.915"></circle>
+                                        <circle class="resolved" cx="18" cy="18" r="15.915" stroke-dasharray="55 100"
+                                            stroke-dashoffset="0"></circle>
+                                        <circle class="progress" cx="18" cy="18" r="15.915" stroke-dasharray="25 100"
+                                            stroke-dashoffset="-55"></circle>
+                                        <circle class="open" cx="18" cy="18" r="15.915" stroke-dasharray="20 100"
+                                            stroke-dashoffset="-80"></circle>
+                                    </svg>
+                                    <div class="mini-donut-center">100%</div>
+                                </div>
+                                <div class="complaint-legends">
+                                    <div class="complaint-legend-item">
+                                        <div class="complaint-legend-left">
+                                            <span class="complaint-legend-dot open"></span>
+                                            <span class="complaint-legend-label">Open</span>
+                                        </div>
+                                        <span class="complaint-legend-value">20%</span>
+                                    </div>
+                                    <div class="complaint-legend-item">
+                                        <div class="complaint-legend-left">
+                                            <span class="complaint-legend-dot progress"></span>
+                                            <span class="complaint-legend-label">In Progress</span>
+                                        </div>
+                                        <span class="complaint-legend-value">25%</span>
+                                    </div>
+                                    <div class="complaint-legend-item">
+                                        <div class="complaint-legend-left">
+                                            <span class="complaint-legend-dot resolved"></span>
+                                            <span class="complaint-legend-label">Resolved</span>
+                                        </div>
+                                        <span class="complaint-legend-value">55%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Workers Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path
+                                        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                                    </path>
+                                </svg>
+                                Active Workers
+                            </h3>
+                            <a href="workers.html" class="card-header-link">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 0;">
+                                <div class="stat-card" style="padding: 1rem;">
+                                    <div class="stat-card-value" style="font-size: 1.5rem;" id="statWorkers">24</div>
+                                    <div class="stat-card-subtitle">Total Workers</div>
+                                </div>
+                                <div class="stat-card" style="padding: 1rem;">
+                                    <div class="stat-card-value" style="font-size: 1.5rem; color: var(--success);"
+                                        id="statAttendance">92%</div>
+                                    <div class="stat-card-subtitle">Attendance Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Complaints Table -->
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Complaints</h3>
+                        <a href="complaints.html" class="btn btn-outline"
+                            style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                            View All
+                        </a>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Resident</th>
+                                        <th>Flat</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaintsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed, Upcoming Events & Occupancy Rate -->
+                <div class="three-col-section">
+                    <!-- Recent Activity Feed -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                                Recent Activity
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-feed" id="activityFeed"></div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Upcoming Events
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-list" id="eventList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Occupancy Rate -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                Occupancy Rate
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="occupancy-chart-wrapper">
+                                <div class="occupancy-donut">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle class="bg" cx="50" cy="50" r="40"></circle>
+                                        <circle class="owners" cx="50" cy="50" r="40" stroke-dasharray="150.8 251.33"
+                                            stroke-dashoffset="0"></circle>
+                                        <circle class="tenants" cx="50" cy="50" r="40" stroke-dasharray="50.27 251.33"
+                                            stroke-dashoffset="-150.8"></circle>
+                                        <circle class="vacant" cx="50" cy="50" r="40" stroke-dasharray="50.27 251.33"
+                                            stroke-dashoffset="-201.06"></circle>
+                                    </svg>
+                                    <div class="occupancy-center">
+                                        <div class="percent">88%</div>
+                                        <div class="label">Occupied</div>
+                                    </div>
+                                </div>
+                                <div class="occupancy-legends">
+                                    <div class="occupancy-legend">
+                                        <span class="occupancy-legend-dot owners"></span>
+                                        <span>Owners (60%)</span>
+                                    </div>
+                                    <div class="occupancy-legend">
+                                        <span class="occupancy-legend-dot tenants"></span>
+                                        <span>Tenants (20%)</span>
+                                    </div>
+                                    <div class="occupancy-legend">
+                                        <span class="occupancy-legend-dot vacant"></span>
+                                        <span>Vacant (20%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Notice Modal -->
+    <div id="newNoticeModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Notice</h3>
+            </div>
+            <div class="modal-body">
+                <form id="noticeForm">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" placeholder="Notice title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select name="priority" required>
+                            <option value="normal">Normal</option>
+                            <option value="important">Important</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea name="content" rows="4" placeholder="Notice content..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideModal('newNoticeModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="submitNotice()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Publish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../scripts/core/api.js"></script>
+    <script src="../../scripts/core/dashboard.js"></script>
+    <script>
+        const user = requireAuth();
+        if (!user || user.role !== 'manager') window.location.href = '../login.html';
+
+        let complaintsCache = [];
+
+        function toUiStatus(status) {
+            const map = { new: 'Open', assigned: 'Assigned', in_progress: 'In Progress', resolved: 'Resolved', closed: 'Resolved' };
+            return map[status] || status;
+        }
+
+        function mapApiComplaint(c) {
+            return {
+                id: c._id,
+                residentName: c.residentId?.name || '',
+                flatNo: c.residentId?.flatNo || '',
+                category: c.title || 'Complaint',
+                status: toUiStatus(c.status),
+                createdAt: c.createdAt
+            };
+        }
+
+        async function loadComplaints() {
+            try {
+                const res = await UrbanHiveApi.apiGet('/complaints');
+                complaintsCache = (res.complaints || []).map(mapApiComplaint);
+            } catch (error) {
+                console.error('Failed to load complaints:', error);
+                showToast('Using demo complaint data.', 'info');
+            }
+        }
+
+        function renderComplaintsTable() {
+            document.getElementById('complaintsTable').innerHTML = complaintsCache.length === 0
+                ? '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No complaints found</td></tr>'
+                : complaintsCache.slice(0, 5).map(c => `
+                <tr>
+                    <td>${c.id ? c.id.slice(-6) : '-'}</td>
+                    <td>${c.residentName || '-'}</td>
+                    <td>${c.flatNo || '-'}</td>
+                    <td>${c.category}</td>
+                    <td>${createBadge(c.status)}</td>
+                    <td>${formatDate(c.createdAt)}</td>
+                    <td><button class="btn btn-ghost" style="padding: 0.5rem;">View</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleSidebar() { document.querySelector('.sidebar')?.classList.toggle('open'); }
+
+        async function initDashboardStats() {
+            try {
+                const resRes = await UrbanHiveApi.apiGet('/users?role=resident');
+                const residents = resRes.users || [];
+                document.getElementById('statResidents').textContent = residents.length;
+            } catch (err) {
+                document.getElementById('statResidents').textContent = '0';
+            }
+
+            try {
+                const workerRes = await UrbanHiveApi.apiGet('/users?role=worker');
+                const workers = workerRes.users || [];
+                document.getElementById('statWorkers').textContent = workers.length;
+                document.getElementById('statAttendance').textContent = '100%';
+            } catch (err) {
+                document.getElementById('statWorkers').textContent = '0';
+                document.getElementById('statAttendance').textContent = '-';
+            }
+
+            try {
+                const payRes = await UrbanHiveApi.apiGet('/payments');
+                const payments = payRes.payments || [];
+                const pendingTotal = payments.filter(p => p.status === 'pending').reduce((s, p) => s + (p.amount || 0), 0);
+                document.getElementById('statMaintenance').textContent = pendingTotal > 0
+                    ? '₹' + (pendingTotal >= 1000 ? (pendingTotal / 1000).toFixed(1) + 'K' : pendingTotal)
+                    : '₹0';
+
+                const approvedTotal = payments.filter(p => p.status === 'approved').reduce((s, p) => s + (p.amount || 0), 0);
+                document.getElementById('statCash').textContent = approvedTotal > 0
+                    ? '₹' + (approvedTotal >= 1000 ? (approvedTotal / 1000).toFixed(1) + 'K' : approvedTotal)
+                    : '₹0';
+            } catch (err) {
+                document.getElementById('statMaintenance').textContent = '₹0';
+                document.getElementById('statCash').textContent = '₹0';
+            }
+
+            await loadComplaints();
+            renderComplaintsTable();
+        }
+
+        initDashboardStats();
+
+        // Render Activity Feed
+        const activities = [
+            { type: 'payment', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>', text: '<strong>System</strong> — Server running on port 5001', time: 'Just now' },
+            { type: 'notice', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>', text: 'Notice published — <strong>Water tank cleaning</strong> on Apr 18', time: '6 hours ago' }
+        ];
+        document.getElementById('activityFeed').innerHTML = activities.map(a => `
+            <div class="activity-item">
+                <div class="activity-icon ${a.type}">${a.icon}</div>
+                <div class="activity-content">
+                    <div class="activity-text">${a.text}</div>
+                    <div class="activity-time">${a.time}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Render Upcoming Events
+        const events = [
+            { title: 'Society AGM', date: '2026-04-20', type: 'meeting', location: 'Community Hall' },
+            { title: 'Republic Day Celebration', date: '2026-04-26', type: 'festival', location: 'Garden Area' }
+        ];
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        document.getElementById('eventList').innerHTML = events.slice(0, 4).map(e => {
+            const d = new Date(e.date);
+            return `
+                <div class="event-item">
+                    <div class="event-date-badge">
+                        <span class="day">${d.getDate()}</span>
+                        <span class="month">${monthNames[d.getMonth()]}</span>
+                    </div>
+                    <div class="event-info">
+                        <div class="event-title">${e.title}</div>
+                        <div class="event-detail">${e.location || 'TBD'}</div>
+                    </div>
+                    <span class="event-type-badge ${e.type}">${e.type}</span>
+                </div>
+            `;
+        }).join('');
+    </script>
+</body>
+
+</html>

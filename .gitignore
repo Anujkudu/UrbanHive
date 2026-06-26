@@ -1,0 +1,65 @@
+# Urban Hive - Client/Server Project
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# Environment Files
+.env
+.env.local
+.env.*.local
+server/.env
+server/.env.*
+client/.env
+client/.env.*
+
+# Build Output (if you add build process later)
+dist/
+build/
+out/
+
+# Dependencies
+node_modules/
+bower_components/
+
+# Test Coverage (if you add tests later)
+coverage/
+.nyc_output/
+
+# Optional: Uncomment if using these tools
+# .sass-cache/
+# *.css.map
+# *.js.map
